@@ -106,8 +106,25 @@ dados_z <- as.data.frame(scale(dados[-1]))
 # verificando a transformação
 summary(dados_z$area_mean)
 
+# Criando novos datasets de treino e de teste
+dados_treino <- dados_z[1:469, ]
+dados_teste <- dados_z[470:569, ]
 
+# Labels
+dados_treino_labels <- dados[1:469, 1]
+dados_teste_labels <- dados[470:569, 1]
 
+# Reclassificando
+modelo_knn_v2 <- knn(train = dados_treino,
+                     test = dados_teste,
+                     cl = dados_treino_labels,
+                     k = 17)
+
+# Criando um Confusion Matrix
+CrossTable(x = dados_teste_labels, y = modelo_knn_v2, prop.chisq = FALSE)
+
+# A performance da segunda versão do modelo foi inferior a da primeira
+# podemos mudar o valor do k
 
 
 
