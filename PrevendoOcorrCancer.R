@@ -126,6 +126,55 @@ CrossTable(x = dados_teste_labels, y = modelo_knn_v2, prop.chisq = FALSE)
 # A performance da segunda versão do modelo foi inferior a da primeira
 # podemos mudar o valor do k
 
+# Construindo um modelo com o algoritmo support vector machine (svm)
+
+# Semente
+set.seed(40)
+
+# Prepara o dataset
+dados <- read.csv("data/dataset.csv", stringsAsFactors = FALSE)
+dados$id = NULL
+dados[, 'index'] <- ifelse(runif(nrow(dados)) < 0.8,1,0)
+View(dados)
+
+# Dados de treino e teste
+trainset <- dados[dados$index==1,]
+testset <- dados[dados$index==0,]
+
+# Obter o indice dos datasets
+traincolNum <- grep('index', names(trainset))
+
+# Remover os indices dos datasets
+trainset <- trainset[,-traincolNum]
+testset <- testset[,-traincolNum]
+
+# Obter indice de coluna da variável target no conjunto de dados
+typecolumn <- grep('diag', names(dados))
+
+# Criando o modelo
+# Ajustamos o kernel para radial, já que este conjunto de dados não tem um 
+# plano linear que pode ser desenhado
+library(e1071)
+modelo_svm_v1 <- svm(diagnosis ~ .,
+                     data = trainset,
+                     type = 'C-classification',
+                     kernel = 'radial')
+
+# Previsões nos dados de treino
+pred_train <- predict(modelo_svm_v1, trainset)
+
+# percentual de previsões corretas com dataset de treino
+mean(pred_train ==trainset$diagnosis)
+
+# Previsões nos dados de teste
+pred_test <- predict(modelo_svm_v1, testset)
+
+# percentual de previsões corretas com dataset de teste
+mean(pred_test == testset$diagnosis)
+
+# Confusion Matrix
+table(pred_test, testset$diagnosis)
+
 
 
 
