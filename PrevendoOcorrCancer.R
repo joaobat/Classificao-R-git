@@ -175,11 +175,20 @@ mean(pred_test == testset$diagnosis)
 # Confusion Matrix
 table(pred_test, testset$diagnosis)
 
+# Construindo um modelo com o algoritmo Random Forest
+library(rpart)
+modelo_rf_v1 <- rpart(diagnosis ~ ., data = trainset, control = rpart.control(cp = .0005))
 
+# Previsões nos dados de teste
+tree_pred <-  predict(modelo_rf_v1, testset, type = 'class')
 
+# Percentual de acerto do modelo
+mean(tree_pred==testset$diagnosis)
 
+# confusion Matrix
+table(tree_pred, testset$diagnosis)
 
-
+# Conclusão: Apenas o Algoritmo SVM teve a melhor taxa de acerto 99%
 
 
 
